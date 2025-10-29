@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Castle Beer API</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 1rem; }
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #ddd; padding: 8px; }
+      th { text-align: left; }
+      input, select { margin-right: .5rem; }
+      .muted { color: #666; }
+    </style>
+  </head>
+  <body>
+    <h1>Beer API Demo (Vercel)</h1>
+    <p class="muted">This page expects to be hosted in the same Vercel project and calls <code>/api/beers</code>.</p>
+    <div>
+      <input id="q" placeholder="Search (q=)" />
+      <input id="brewery" placeholder="brewery=" />
+      <input id="style" placeholder="style=" />
+      <select id="sort">
+        <option value="name">name</option>
+        <option value="price_eur">price_eur</option>
+        <option value="brewery">brewery</option>
+        <option value="style">style</option>
+      </select>
+      <select id="order">
+        <option value="asc">asc</option>
+        <option value="desc">desc</option>
+      </select>
+      <button id="load">Load</button>
+    </div>
+    <p id="count"></p>
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Brewery</th><th>Style</th><th>Price (€)</th><th>Qty</th></tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <script>
+      async function load() {
+        const params = new URLSearchParams();
+        const q = document.getElementById('q').value;
+        const brewery = document.getElementById('brewery').value;
+        const style = document.getElementById('style').value;
+        const sort = document.getElementById('sort').value;
+        const order = document.getElementById('order').value;
+        if (q) params.set('q', q);
+        if (brewery) params.set('brewery', brewery);
+        if (style) params.set('style', style);
+        if (sort) params.set('sort', sort);
+        if (order) params.set('order', order);
+        const url = `/api/beers?${params.toString()}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        document.getElementById('count').textContent = `${data.count} result(s)`;
+        const tbody = document.getElementById('rows');
+        tbody.innerHTML = '';
+        for (const x of data.items) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${x.name}</td><td>${x.brewery}</td><td>${x.style}</td><td>${x.price_eur.toFixed(2)}</td><td>${x.quantity}</td>`;
+          tbody.appendChild(tr);
+        }
+      }
+      document.getElementById('load').addEventListener('click', load);
+      load();
+    </script>
+  </body>
+</html>

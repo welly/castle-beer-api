@@ -32,7 +32,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   const dir = order === "desc" ? -1 : 1;
   items.sort((a, b) => {
-    if (sort === "price") return (a.price_eur - b.price_eur) * dir;
+    if (sort === "price" || sort === "price_eur") return (a.price_eur - b.price_eur) * dir;
     const av = (a as any)[sort]?.toString().toLowerCase() || "";
     const bv = (b as any)[sort]?.toString().toLowerCase() || "";
     return av < bv ? -1 * dir : av > bv ? 1 * dir : 0;
